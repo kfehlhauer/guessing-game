@@ -5,6 +5,8 @@ import zio.Console.*
 
 object Main extends zio.ZIOAppDefault:
 
+  val clearConsole = printLine("\u001b[2J")
+
   val selectGame: ZIO[Console, Throwable, GuessingGame] =
     for
       _ <- printLine(
@@ -21,9 +23,8 @@ object Main extends zio.ZIOAppDefault:
 
   def makeGuess(gg: GuessingGame) =
     for
-      _      <- printLine("\u001b[2J")
       _      <- hints(gg)
-      _      <- printLine("Make a guess")
+      _      <- printLine("Please enter your guess")
       guess  <- getStrLn
       result <- gg.checkGuess(guess)
     yield result
@@ -39,20 +40,18 @@ object Main extends zio.ZIOAppDefault:
     for
       guess <- makeGuess(gg)
       _ <-
-        if !guess then
-          printLine("Please Try Again")
-          gameLoop(gg)
+        if !guess then clearConsole *> printLine("Please Try Again") *> gameLoop(gg)
         else printLine("Congratulations, you have Won!!!\n\n")
     yield ()
 
   def outerGameLoop: ZIO[Console, Throwable, Unit] =
     for
       gameChoice <- selectGame
-      _          <- gameLoop(gameChoice)
+      _          <- clearConsole *> gameLoop(gameChoice)
       _          <- printLine("Would you like to play again?")
       _          <- printLine("""Answer "y" or any other input to quit playing.""")
       replay     <- getStrLn
-      _          <- printLine("\u001b[2J")
+      _          <- clearConsole
       _ <-
         if replay.toUpperCase == "Y" then outerGameLoop
         else printLine("Thanks for playing! Goodbye.") *> ZIO.succeed(())
