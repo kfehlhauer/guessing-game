@@ -7,7 +7,7 @@ object Main extends zio.ZIOAppDefault:
 
   val clearConsole = printLine("\u001b[2J")
 
-  val selectGame: ZIO[Console, Throwable, GuessingGame] =
+  val selectGame: IO[Exception, GuessingGame] =
     for
       _ <- printLine(
         """|Which game do you you wish to play:
@@ -29,14 +29,14 @@ object Main extends zio.ZIOAppDefault:
       result <- gg.checkGuess(guess)
     yield result
 
-  def hints(gg: GuessingGame): ZIO[Console, Throwable, Unit] =
+  def hints(gg: GuessingGame): IO[Exception, Unit] =
     printLine(
       s"""This ${gg.game.toString} contains ${gg.ttg.length} characters and begins with a "${gg
         .ttg(0)
         .toUpper}" and ends with a "${gg.ttg.last.toUpper}""""
     )
 
-  def gameLoop(gg: GuessingGame): ZIO[Console, Throwable, Unit] =
+  def gameLoop(gg: GuessingGame): IO[Exception, Unit] =
     for
       guess <- makeGuess(gg)
       _ <-
@@ -44,7 +44,7 @@ object Main extends zio.ZIOAppDefault:
         else printLine("Congratulations, you have Won!!!\n\n")
     yield ()
 
-  def outerGameLoop: ZIO[Console, Throwable, Unit] =
+  def outerGameLoop: IO[Exception, Unit] =
     for
       gameChoice <- selectGame
       _          <- clearConsole *> gameLoop(gameChoice)
