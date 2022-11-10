@@ -15,7 +15,7 @@ object Main extends zio.ZIOAppDefault:
                                         |2. Guess City
                                         |Please enter a number as your choice.""".stripMargin
       )
-      selection <- getStrLn
+      selection <- readLine
       thisGame <- GuessingGame(selection).catchAll { _ =>
         printLine("Please select a valid game type") *> selectGame
       }
@@ -25,7 +25,7 @@ object Main extends zio.ZIOAppDefault:
     for
       _      <- hints(gg)
       _      <- printLine("Please enter your guess")
-      guess  <- getStrLn
+      guess  <- readLine
       result <- gg.checkGuess(guess)
     yield result
 
@@ -50,7 +50,7 @@ object Main extends zio.ZIOAppDefault:
       _          <- clearConsole *> gameLoop(gameChoice)
       _          <- printLine("Would you like to play again?")
       _          <- printLine("""Answer "y" or any other input to quit playing.""")
-      replay     <- getStrLn
+      replay     <- readLine
       _          <- clearConsole
       _ <-
         if replay.toUpperCase == "Y" then outerGameLoop

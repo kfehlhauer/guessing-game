@@ -1,11 +1,11 @@
 name := "guessing-game"
 version := "1.0"
-scalaVersion := "3.1.1"
+scalaVersion := "3.2.1"
 
 enablePlugins(JavaAppPackaging)
 
 libraryDependencies ++= Seq(
-	"dev.zio" %% "zio" % "2.0.0-RC4"
+	"dev.zio" %% "zio" % "2.0.3"
 )
 
 enablePlugins(DockerPlugin)
